@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css"
+          integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
+    <style type="text/css">
+        #container {
+            margin: 20px auto;
+            padding: 10px;
+            background-color: #f0f0f0;
+        }
+
+        #headerDiv {
+            margin: 20px auto;
+            padding: 10px;
+            background-color: #f0f0f0;
+        }
+
+        #compareData {
+            margin: 20px auto;
+            padding: 10px;
+            background-color: #f0f0f0;
+            width: 80%
+        }
+
+        textarea {
+            width: 100%;
+            font-family: Courier
+        }
+
+    </style>
+
+</head>
+<body>
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+        integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+        crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.14.7/dist/umd/popper.min.js"
+        integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+        crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/js/bootstrap.min.js"
+        integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+        crossorigin="anonymous"></script>
+
+<div class="container" id="headerDiv">
+    <nav class="navbar navbar-expand-lg navbar-light">
+        <a class="navbar-brand" href="/">Домой</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav">
+                <li class="nav-item active">
+                    <a class="nav-link" href="/compareStands">Сравнить стенды</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/manageRuns">Управление перезапусками</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+</div>
+
+<div class="container" id="container">
+    <form th:action="@{/compareStands/compare}">
+        <div class="form-group">
+            <label for="standA">Стенд A</label>
+            <input id="standA" name="standA" type="text" th:value="${standA}" class="form-control"
+                   placeholder="Enter stand A">
+        </div>
+        <div class="form-group">
+            <label for="standB">Стенд B</label>
+            <input id="standB" name="standB" type="text" th:value="${standB}" class="form-control"
+                   placeholder="Enter stand B">
+        </div>
+        <button type="submit" class="btn btn-primary">Сравнить стенды</button>
+    </form>
+</div>
+
+
+<div class="accordion" id="compareData">
+    <div class="card">
+        <div class="card-header" id="allData">
+            <h2 class="mb-0">
+                <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapseOne"
+                        aria-expanded="true" aria-controls="collapseOne">
+                    Общие данные сравнения стендов
+                </button>
+            </h2>
+        </div>
+
+        <div id="collapseOne" class="collapse show" aria-labelledby="allData">
+            <div class="card-body">
+                <textarea th:text="${resultCommom}" cols="150" rows="10"></textarea>
+            </div>
+        </div>
+    </div>
+    <div class="card">
+        <div class="card-header" id="A_to_B">
+            <h2 class="mb-0">
+                <button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#collapseTwo"
+                        aria-expanded="false" aria-controls="collapseTwo">
+                    Обновление стенда A до версий из B
+                </button>
+            </h2>
+        </div>
+        <div id="collapseTwo" class="collapse" aria-labelledby="A_to_B">
+            <div class="card-body">
+                <textarea th:text="${resultAToB}" cols="150" rows="10"></textarea>
+            </div>
+        </div>
+    </div>
+    <div class="card">
+        <div class="card-header" id="B_to_A">
+            <h2 class="mb-0">
+                <button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#collapseThree"
+                        aria-expanded="false" aria-controls="collapseThree">
+                    Обновление стенда B до версий из A
+                </button>
+            </h2>
+        </div>
+        <div id="collapseThree" class="collapse" aria-labelledby="B_to_A">
+            <div class="card-body">
+                <textarea th:text="${resultBToA}" cols="150" rows="10"></textarea>
+            </div>
+        </div>
+    </div>
+    <div class="card">
+        <div class="card-header" id="majorVersions">
+            <h2 class="mb-0">
+                <button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#collapse4"
+                        aria-expanded="false" aria-controls="collapseThree">
+                    Старшие версии с обоих стендов
+                </button>
+            </h2>
+        </div>
+        <div id="collapse4" class="collapse" aria-labelledby="majorVersions">
+            <div class="card-body">
+                <textarea th:text="${resultMajor}" cols="150" rows="10"></textarea>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
