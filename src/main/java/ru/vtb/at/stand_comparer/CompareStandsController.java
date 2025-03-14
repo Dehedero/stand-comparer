@@ -26,25 +26,6 @@ public class CompareStandsController {
         return "stand_compare_page";
     }
 
-    @GetMapping("/manageRuns")
-    public String runManagerPage(Model model) {
-        return "manage_runs";
-    }
-
-    @GetMapping("/manageRuns/testLogPass")
-    public String runManagerPageTestAuth(Model model, String email, String password) {
-        model.addAttribute("email", email);
-        model.addAttribute("password", password);
-        return "manage_runs";
-    }
-
-    @GetMapping("/manageRuns/getRunsData")
-    public String runManagerPageGetData(Model model, String teamName, String jobName) {
-        model.addAttribute("teamName", teamName);
-        model.addAttribute("jobName", jobName);
-        return "manage_runs";
-    }
-
     @GetMapping("/compareStands/compare")
     public String compareStands(Model model, String standA, String standB) {
         model.addAttribute("standA", standA);

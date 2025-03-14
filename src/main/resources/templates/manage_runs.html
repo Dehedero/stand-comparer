@@ -70,19 +70,19 @@
                 </li>
             </ul>
         </div>
-        <form class="form-inline" th:action="@{/manageRuns/testLogPass}">
+        <form class="form-inline" th:action="@{/manageRuns/auth}">
             <input name="email" type="email" class="form-control mr-sm-2"
                    aria-describedby="emailHelp"
                    placeholder="Email" th:value="${email}">
             <input name="password" type="password" class="form-control mr-sm-2"
                    placeholder="Password" th:value="${password}">
-            <button class="btn btn-secondary" type="submit">TEST</button>
+            <button class="btn btn-secondary" type="submit">Auth</button>
         </form>
     </nav>
 </div>
 
 <div class="container" id="container">
-    <form th:action="@{/compareStands/getRunsData}">
+    <form th:action="@{/manageRuns/getRunsData}">
         <div class="form-group">
             <label for="teamName">Team Name</label>
             <input id="teamName" name="teamName" type="text" th:value="${teamName}" class="form-control"

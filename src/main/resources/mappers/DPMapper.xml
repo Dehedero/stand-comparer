@@ -1,0 +1,28 @@
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="mappers.DPMapper">
+
+    <select id="getRandomUser" resultType="String">
+        SELECT DISTINCT l."name"
+        FROM allure.test_results tr
+        JOIN allure.links l ON tr.uuid = l.test_result_uuid
+        LEFT JOIN (
+            SELECT DISTINCT l."name"
+            FROM allure.test_results tr
+            JOIN allure.links l ON tr.uuid = l.test_result_uuid
+            WHERE tr.build_start = (select MAX(tr.build_start) FROM allure.test_results tr where tr.team_name = '${teamName}' and tr.job_name = '${jobName}')
+            AND tr.team_name = '${teamName}'
+            AND tr.job_name = '${jobName}'
+            AND tr.status = 'passed'
+        ) passed_links ON l."name" = passed_links."name"
+        WHERE tr.build_start = (select MAX(tr.build_start) FROM allure.test_results tr where tr.team_name = '${teamName}' and tr.job_name = '${jobName}')
+        AND tr.team_name = '${teamName}'
+        AND tr.status != 'passed'
+        AND tr.job_name = '${jobName}'
+        AND passed_links."name" IS NULL
+        ORDER BY l."name" ASC
+    </select>
+
+</mapper>
