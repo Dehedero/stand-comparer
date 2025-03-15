@@ -29,7 +29,6 @@ public class StandComparerApplication extends SpringBootServletInitializer {
         return new StandComparer();
     }
 
-
     @Bean
     public SqlSessionFactory sqlSessionFactory() throws Exception {
         SqlSessionFactoryBean factoryBean = new SqlSessionFactoryBean();

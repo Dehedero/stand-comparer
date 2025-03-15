@@ -1,5 +1,6 @@
 package ru.vtb.at.stand_comparer;
 
+import com.google.gson.JsonObject;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import io.restassured.response.Response;
@@ -29,21 +30,21 @@ public class RunManagerController {
     public String runManagerPageTestAuth(Model model, String email, String password) {
         model.addAttribute("email", email);
         model.addAttribute("password", password);
+//        Response authResponse = RestAssured.given()
+//                .relaxedHTTPSValidation()
+//                .contentType(ContentType.JSON)
+//                .body("{\"username\" : \"\", \"password\" : \"\"}")
+//                .post("https://sfer.inno.local/api/aut/login");
         return "manage_runs";
     }
 
-    @GetMapping("/manageRuns/getRunsData")
-    public String runManagerPageGetData(Model model, String teamName, String jobName) {
+    @GetMapping(value = "/manageRuns/doManage", params = "action=getData")
+    public String runManagerPageGetData(Model model, String teamName, String jobName, Integer runsNum) {
         model.addAttribute("teamName", teamName);
         model.addAttribute("jobName", jobName);
-        dpMapper.getFailedTestFor(teamName, jobName);
+        dpMapper.getFailedTestFor(teamName, jobName, runsNum);
 
-        Response authResponse = RestAssured.given()
-                .relaxedHTTPSValidation()
-                .contentType(ContentType.JSON)
-                .body("{\"username\" : \"\", \"password\" : \"\"}") //TODO Вытягивать откуда-то логин и пароль
-                .post("https://sfer.inno.local/api/aut/login");
-        //TODO завезти GSON в pom
+
         Map<String, String> cookies = new HashMap<>();
         cookies.put("ACCESS_TOKEN", "");
         cookies.put("REFRESH_TOKEN", "");
@@ -55,26 +56,23 @@ public class RunManagerController {
         return "manage_runs";
     }
 
-    @GetMapping("/manageRuns/getRunsData")
-    public String runManagerRunTests(Model model, String teamName, String jobName) {
-        model.addAttribute("teamName", teamName);
-        model.addAttribute("jobName", jobName);
-        dpMapper.getFailedTestFor(teamName, jobName);
-
-        Response authResponse = RestAssured.given()
-                .relaxedHTTPSValidation()
-                .contentType(ContentType.JSON)
-                .body("{\"username\" : \"\", \"password\" : \"\"}") //TODO Вытягивать откуда-то логин и пароль
-                .post("https://sfer.inno.local/api/aut/login");
-        //TODO завезти GSON в pom
+    @GetMapping(value = "/manageRuns/doManage", params = "action=rerun")
+    public String runManagerRunTests(String testList) {
         Map<String, String> cookies = new HashMap<>();
         cookies.put("ACCESS_TOKEN", "");
         cookies.put("REFRESH_TOKEN", "");
+//        String.format("{\\\"parameter\\\":[\n" +
+//                "{\\\"name\\\":\\\"TAGS\\\",\\\"value\\\":\\\"%s\\\"},\n" +
+//                "{\\\"name\\\":\\\"ENVIRONMENT_SETTINGS\\\",\\\"value\\\":\\\"%s\\\"},\n" +
+//                "{\\\"name\\\":\\\"FORK_COUNT\\\",\\\"value\\\":\\\"%d\\\"},\n" +
+//                "{\\\"name\\\":\\\"EXPORT_ALLURE_RESULTS\\\",\\\"value\\\":%b},\n" +
+//                "{\\\"name\\\":\\\"TEAM_NAME\\\",\\\"value\\\":\\\"%s\\\"}]\n" +
+//                "}", tagsString, envSettingsPath, forkCount, exportAllureResults, teamName);
         RestAssured.given()
                 .contentType("application/x-www-form-urlencoded")
                 .relaxedHTTPSValidation()
                 .cookies(cookies);
-
+        JsonObject jsonObject = new JsonObject();
         return "manage_runs";
     }
 

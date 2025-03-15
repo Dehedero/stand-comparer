@@ -39,6 +39,7 @@
 
 
 
+
     </style>
 
 </head>
@@ -82,7 +83,7 @@
 </div>
 
 <div class="container" id="container">
-    <form th:action="@{/manageRuns/getRunsData}">
+    <form th:action="@{/manageRuns/doManage}">
         <div class="form-group">
             <label for="teamName">Team Name</label>
             <input id="teamName" name="teamName" type="text" th:value="${teamName}" class="form-control"
@@ -93,7 +94,8 @@
             <input id="jobName" name="jobName" type="text" th:value="${jobName}" class="form-control"
                    placeholder="Введите нназвание джобы в сфере">
         </div>
-        <button type="submit" class="btn btn-primary">Получить данные</button>
+        <button type="submit" name="action" value="getData" class="btn btn-primary">Получить данные</button>
+        <textarea th:text="${tags}" cols="150" rows="10"></textarea>
     </form>
 </div>
 
