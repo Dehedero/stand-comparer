@@ -40,6 +40,7 @@
 
 
 
+
     </style>
 
 </head>
@@ -90,11 +91,19 @@
                    placeholder="Введите имя команды как в...">
         </div>
         <div class="form-group">
-            <label for="jobName">Job Name</label>
+            <label for="jobName">Job Name, как в сфере</label>
             <input id="jobName" name="jobName" type="text" th:value="${jobName}" class="form-control"
                    placeholder="Введите нназвание джобы в сфере">
         </div>
-        <button type="submit" name="action" value="getData" class="btn btn-primary">Получить данные</button>
+        <div class="form-group">
+            <label for="runsNumber">Сколько запусков анализировать</label>
+            <input id="runsNumber" name="runsNumber" min="1" max="20" type="number" th:value="${runsNumber}"
+                   class="form-control"/>
+        </div>
+        <div class="form-group-inline">
+            <button type="submit" name="action" value="getData" class="btn btn-primary">Получить данные</button>
+            <button type="submit" name="action" value="formatData" class="btn btn-secondary">Форматировать</button>
+        </div>
         <textarea th:text="${tags}" cols="150" rows="10"></textarea>
     </form>
 </div>
