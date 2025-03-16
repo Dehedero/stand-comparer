@@ -8,8 +8,8 @@ public class CompareData {
 
     public static String NA = "N/A";
 
-    String service, serviceAVersion, serviceBVersion;
-    String comparison;
+    public String service, serviceAVersion, serviceBVersion;
+    public String comparison;
 
     public CompareData(String service, String serviceAVersion, String serviceBVersion, String comparison) {
         this.service = service;

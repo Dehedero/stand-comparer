@@ -1,4 +1,4 @@
-package ru.vtb.at.stand_comparer;
+package ru.vtb.at;
 
 import com.google.gson.JsonObject;
 import io.restassured.RestAssured;
@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import ru.vtb.at.mappers.DPMapper;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 
@@ -42,16 +43,7 @@ public class RunManagerController {
     public String runManagerPageGetData(Model model, String teamName, String jobName, Integer runsNum) {
         model.addAttribute("teamName", teamName);
         model.addAttribute("jobName", jobName);
-        dpMapper.getFailedTestFor(teamName, jobName, runsNum);
-
-
-        Map<String, String> cookies = new HashMap<>();
-        cookies.put("ACCESS_TOKEN", "");
-        cookies.put("REFRESH_TOKEN", "");
-        RestAssured.given()
-                .contentType("application/x-www-form-urlencoded")
-                .relaxedHTTPSValidation()
-                .cookies(cookies);
+        List<String> tags = dpMapper.getFailedTestFor(teamName, jobName, runsNum);
 
         return "manage_runs";
     }
