@@ -2,9 +2,9 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="mappers.DPMapper">
+<mapper namespace="ru.vtb.at.mappers.DPMapper">
 
-    <select id="getFailedTestFor" resultType="String">
+    <select id="getFailedTestsFor" resultType="String">
         SELECT DISTINCT l."name"
         FROM allure.test_results tr
         JOIN allure.links l ON tr.uuid = l.test_result_uuid

@@ -18,11 +18,12 @@ import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import ru.vtb.at.stand_comparer.StandComparer;
 
 import javax.sql.DataSource;
-
+import java.sql.SQLException;
 
 
 @SpringBootApplication
-@ComponentScan({"ru.vtb.at.context"})
+@ComponentScan({"ru.vtb.at.controllers"})
+@MapperScan(value = "ru.vtb.at.mappers", sqlSessionFactoryRef = "sqlSessionFactory")
 public class StandComparerApplication extends SpringBootServletInitializer {
 
     @Override
@@ -32,6 +33,38 @@ public class StandComparerApplication extends SpringBootServletInitializer {
 
     public static void main(String[] args) {
         SpringApplication.run(StandComparerApplication.class, args);
+    }
+
+    @Value("${dp.host}")
+    String dpHost;
+    @Value("${dp.port}")
+    String dpPort;
+    @Value("${dp.username}")
+    String dpLog;
+    @Value("${dp.password}")
+    String dpPass;
+
+    @Bean
+    public DataSource dataSource() throws SQLException {
+        HikariDataSource ds = new HikariDataSource();
+        ds.setJdbcUrl(String.format("jdbc:postgresql://%s:%s/dp", dpHost, dpPort));
+        ds.setUsername(dpLog);
+        ds.setPassword(dpPass);
+        ds.setMinimumIdle(3);
+        ds.setMaximumPoolSize(10);
+        ds.setLoginTimeout(15);
+        return ds;
+    }
+
+    @Bean
+    public SqlSessionFactory sqlSessionFactory() throws Exception {
+        SqlSessionFactoryBean factoryBean = new SqlSessionFactoryBean();
+        factoryBean.setDataSource(dataSource());
+        org.apache.ibatis.session.Configuration configuration = new org.apache.ibatis.session.Configuration();
+        configuration.setLogImpl(Log4j2Impl.class);
+        factoryBean.setConfiguration(configuration);
+        factoryBean.setMapperLocations(new PathMatchingResourcePatternResolver().getResources("classpath:mappers/*.xml"));
+        return factoryBean.getObject();
     }
 
     @Bean()

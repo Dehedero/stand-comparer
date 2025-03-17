@@ -1,16 +1,17 @@
-package ru.vtb.at;
+package ru.vtb.at.controllers;
 
 import com.google.gson.JsonObject;
 import io.restassured.RestAssured;
-import io.restassured.http.ContentType;
-import io.restassured.response.Response;
+import org.apache.logging.log4j.util.Strings;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import ru.vtb.at.mappers.DPMapper;
+import ru.vtb.at.runManager.RunManagerObject;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -27,23 +28,51 @@ public class RunManagerController {
         return "manage_runs";
     }
 
-    @GetMapping("/manageRuns/auth")
-    public String runManagerPageTestAuth(Model model, String email, String password) {
-        model.addAttribute("email", email);
-        model.addAttribute("password", password);
+    @PostMapping("/manageRuns/auth")
+    public String runManagerPageTestAuth(String email, String password) {
+        System.out.println(email);
 //        Response authResponse = RestAssured.given()
 //                .relaxedHTTPSValidation()
 //                .contentType(ContentType.JSON)
 //                .body("{\"username\" : \"\", \"password\" : \"\"}")
 //                .post("https://sfer.inno.local/api/aut/login");
-        return "manage_runs";
+        return "redirect:/manageRuns";
     }
 
     @GetMapping(value = "/manageRuns/doManage", params = "action=getData")
-    public String runManagerPageGetData(Model model, String teamName, String jobName, Integer runsNum) {
+    public String runManagerPageGetData(Model model, String teamName, String jobName, Integer runsNumber) {
         model.addAttribute("teamName", teamName);
         model.addAttribute("jobName", jobName);
-        List<String> tags = dpMapper.getFailedTestFor(teamName, jobName, runsNum);
+        model.addAttribute("runsNumber", runsNumber);
+        try {
+            List<String> tags = dpMapper.getFailedTestsFor(teamName, jobName, runsNumber);
+            StringBuilder sb = new StringBuilder();
+            tags.forEach(t -> sb.append(t).append(" "));
+            model.addAttribute("tags", sb.toString());
+        } catch (Exception e) {
+            model.addAttribute("data", e.getMessage() + "\n" + Arrays.toString(e.getStackTrace()));
+            return "manage_runs";
+        }
+
+        return "manage_runs";
+    }
+
+    @GetMapping(value = "/manageRuns/doManage", params = "action=formatData")
+    public String runManagerPageGetData(Model model, String teamName, String jobName, Integer runsNumber, String data) {
+        model.addAttribute("teamName", teamName);
+        model.addAttribute("jobName", jobName);
+        model.addAttribute("runsNumber", runsNumber);
+
+        if (Strings.isNotEmpty(data) && !data.contains("@TmsLink")) {
+            StringBuilder sb = new StringBuilder();
+            for (String id : data.split(" ")) {
+                if (!sb.isEmpty())
+                    sb.append(", ");
+                sb.append("@TmsLink=").append(id);
+            }
+            model.addAttribute("data", sb.toString());
+        } else
+            model.addAttribute("data", data);
 
         return "manage_runs";
     }
