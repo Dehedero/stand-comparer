@@ -104,7 +104,9 @@
             <button type="submit" name="action" value="getData" class="btn btn-primary">Получить данные</button>
             <button type="submit" name="action" value="formatData" class="btn btn-secondary">Форматировать</button>
         </div>
-        <textarea th:value="${data}" id="data" name="data" cols="150" rows="10"></textarea>
+        <div class="form-group">
+            <textarea th:text="${data}" id="data" name="data" cols="150" rows="10"></textarea>
+        </div>
     </form>
 </div>
 

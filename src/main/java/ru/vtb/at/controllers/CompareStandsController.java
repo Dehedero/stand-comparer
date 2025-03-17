@@ -1,4 +1,4 @@
-package ru.vtb.at;
+package ru.vtb.at.controllers;
 
 
 import org.apache.commons.lang3.StringUtils;

@@ -48,7 +48,7 @@ public class RunManagerController {
             List<String> tags = dpMapper.getFailedTestsFor(teamName, jobName, runsNumber);
             StringBuilder sb = new StringBuilder();
             tags.forEach(t -> sb.append(t).append(" "));
-            model.addAttribute("tags", sb.toString());
+            model.addAttribute("data", sb.toString());
         } catch (Exception e) {
             model.addAttribute("data", e.getMessage() + "\n" + Arrays.toString(e.getStackTrace()));
             return "manage_runs";
