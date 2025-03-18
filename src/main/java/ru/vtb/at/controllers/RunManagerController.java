@@ -38,7 +38,7 @@ public class RunManagerController {
         return "redirect:/manageRuns";
     }
 
-    @GetMapping(value = "/manageRuns/doManage", params = "action=getData")
+    @PostMapping(value = "/manageRuns/doManage", params = "action=getData")
     public String runManagerPageGetData(Model model, String teamName, String jobName, Integer runsNumber) {
         model.addAttribute("teamName", teamName);
         model.addAttribute("jobName", jobName);
@@ -56,7 +56,7 @@ public class RunManagerController {
         return "manage_runs";
     }
 
-    @GetMapping(value = "/manageRuns/doManage", params = "action=formatData")
+    @PostMapping(value = "/manageRuns/doManage", params = "action=formatData")
     public String runManagerPageGetData(Model model, String teamName, String jobName, Integer runsNumber, String data) {
         model.addAttribute("teamName", teamName);
         model.addAttribute("jobName", jobName);
@@ -66,7 +66,7 @@ public class RunManagerController {
             StringBuilder sb = new StringBuilder();
             for (String id : data.split(" ")) {
                 if (!sb.isEmpty())
-                    sb.append(", ");
+                    sb.append(" or ");
                 sb.append("@TmsLink=").append(id);
             }
             model.addAttribute("data", sb.toString());
@@ -76,7 +76,7 @@ public class RunManagerController {
         return "manage_runs";
     }
 
-    @GetMapping(value = "/manageRuns/doManage", params = "action=rerun")
+    @PostMapping(value = "/manageRuns/doManage", params = "action=rerun")
     public String runManagerRunTests(String testList) {
         Map<String, String> cookies = new HashMap<>();
         cookies.put("ACCESS_TOKEN", "");

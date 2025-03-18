@@ -84,7 +84,7 @@
 </div>
 
 <div class="container" id="container">
-    <form th:action="@{/manageRuns/doManage}">
+    <form th:action="@{/manageRuns/doManage}" method="post">
         <div class="form-group">
             <label for="teamName">Team Name</label>
             <input id="teamName" name="teamName" type="text" th:value="${teamName}" class="form-control"

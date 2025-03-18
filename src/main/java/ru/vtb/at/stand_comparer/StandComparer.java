@@ -21,6 +21,8 @@ import static ru.vtb.at.stand_comparer.CompareData.NA;
  */
 public class StandComparer implements Comparator<CompareData> {
 
+    public String standNameFromFile = "";
+
     private final String BASE_URI = "http://k8s-versions-os.%s.innodev.local";
 
     /**
@@ -73,13 +75,13 @@ public class StandComparer implements Comparator<CompareData> {
         String[] fileRows = new String(fileBytes).split("[\r\n]{1,2}");
         Map<String, String> serviceFileMap = new HashMap<>();
         String[] splitedRow;
-        for (String row : fileRows) {
-            if (row.matches("^[.\\d]*$"))
+        for (int i = 1; i < fileRows.length; i++) {
+            if (fileRows[i].matches("^[.\\d]*$"))
                 continue;
-            splitedRow = row.split("_");
+            splitedRow = fileRows[i].split("_");
             serviceFileMap.put(splitedRow[0], splitedRow[1]);
         }
-
+        standNameFromFile = fileRows[0];
         return serviceFileMap;
     }
 

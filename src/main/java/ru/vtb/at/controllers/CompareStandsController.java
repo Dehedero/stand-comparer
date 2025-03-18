@@ -35,7 +35,7 @@ public class CompareStandsController {
     public String compareStands(Model model, String standA, String standB, String loadFile, MultipartFile formFile) {
         model.addAttribute("standA", standA);
         model.addAttribute("standB", standB);
-        Map<String, String> firstServicesMap;
+        Map<String, String> firstServicesMap = null;
         Map<String, String> secondServicesMap;
 
         try {
@@ -43,8 +43,10 @@ public class CompareStandsController {
 
             if (Strings.isEmpty(loadFile))
                 secondServicesMap = standComparer.getServicesMap(standComparer.getRawData(standB));
-            else
+            else {
                 secondServicesMap = standComparer.getServicesMap(formFile);
+                standB = standComparer.standNameFromFile;
+            }
         } catch (Exception e) {
             model.addAttribute("resultCommom", e.getMessage() + "\n" + Arrays.toString(e.getStackTrace()));
             return "stand_compare_page";
