@@ -1,12 +1,14 @@
 package ru.vtb.at.controllers;
 
 
-import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.util.Strings;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.multipart.MultipartFile;
+import ru.vtb.at.stand_comparer.AlphabeticComparator;
 import ru.vtb.at.stand_comparer.CompareData;
 import ru.vtb.at.stand_comparer.StandComparer;
 
@@ -29,32 +31,36 @@ public class CompareStandsController {
         return "stand_compare_page";
     }
 
-    @GetMapping("/compareStands/compare")
-    public String compareStands(Model model, String standA, String standB) {
+    @PostMapping("/compareStands/compare")
+    public String compareStands(Model model, String standA, String standB, String loadFile, MultipartFile formFile) {
         model.addAttribute("standA", standA);
         model.addAttribute("standB", standB);
-        String firstStandData;
-        String secondStandData;
+        Map<String, String> firstServicesMap;
+        Map<String, String> secondServicesMap;
 
         try {
-            firstStandData = standComparer.getRawData(standA);
-            secondStandData = standComparer.getRawData(standB);
+            firstServicesMap = standComparer.getServicesMap(standComparer.getRawData(standA));
+
+            if (Strings.isEmpty(loadFile))
+                secondServicesMap = standComparer.getServicesMap(standComparer.getRawData(standB));
+            else
+                secondServicesMap = standComparer.getServicesMap(formFile);
         } catch (Exception e) {
             model.addAttribute("resultCommom", e.getMessage() + "\n" + Arrays.toString(e.getStackTrace()));
             return "stand_compare_page";
         }
 
-        Map<String, String> firstServicesMap = standComparer.getServicesMap(firstStandData);
-        Map<String, String> secondServicesMap = standComparer.getServicesMap(secondStandData);
         Map<String, String[]> standsDifferences = standComparer.getStandsDifferences(firstServicesMap, secondServicesMap);
 
         int serviceColumnWidth = 60;
         String formatHeader = "%-" + serviceColumnWidth + "s%-" + serviceColumnWidth + "s";
         String headers = String.format(formatHeader, standA.replaceAll("\\..+", ""), standB.replaceAll("\\..+", ""));
 
+        List<CompareData> allDataList = new LinkedList<>();
         List<CompareData> compareDataListX = new LinkedList<>();
         List<CompareData> compareDataListBigger = new LinkedList<>();
         List<CompareData> compareDataListLess = new LinkedList<>();
+
         StringBuilder allDataSB = new StringBuilder();
         StringBuilder majorVersionsSB = new StringBuilder();
         allDataSB.append(headers).append(System.lineSeparator());
@@ -66,6 +72,7 @@ public class CompareStandsController {
             CompareData data = new CompareData(service, firstVersion, secondVersion, comparison);
             allDataSB.append(data.getFormatted(50));
             majorVersionsSB.append(data.getMajor());
+            allDataList.add(data);
             if (comparison.equals("x"))
                 compareDataListX.add(data);
             else if (comparison.equals(">"))
@@ -73,6 +80,11 @@ public class CompareStandsController {
             else
                 compareDataListLess.add(data);
         }
+        AlphabeticComparator alphabeticComparator = new AlphabeticComparator();
+        compareDataListX.sort(alphabeticComparator);
+        compareDataListBigger.sort(alphabeticComparator);
+        compareDataListLess.sort(alphabeticComparator);
+
         StringBuilder aVersionsSBDown = new StringBuilder();
         StringBuilder bVersionsSBUp = new StringBuilder();
 

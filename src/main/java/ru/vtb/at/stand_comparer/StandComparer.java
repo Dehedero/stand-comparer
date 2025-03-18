@@ -5,11 +5,10 @@ import io.restassured.RestAssured;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
+import org.springframework.web.multipart.MultipartFile;
 
-import java.util.Comparator;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeMap;
+import java.io.IOException;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -58,6 +57,30 @@ public class StandComparer implements Comparator<CompareData> {
                     )));
         }
         return new TreeMap<>();
+    }
+
+    /**
+     * Преобразует данные из csv файла в карту, где ключ — имя сервиса,
+     * а значение — версия сервиса.
+     *
+     * @param file полученные в запросе файл.
+     * @return Сортированная карта (TreeMap), где ключ — имя сервиса, значение — его версия.
+     */
+    public Map<String, String> getServicesMap(MultipartFile file) throws IOException {
+        if (file == null || file.isEmpty())
+            return new TreeMap<>();
+        byte[] fileBytes = file.getBytes();
+        String[] fileRows = new String(fileBytes).split("[\r\n]{1,2}");
+        Map<String, String> serviceFileMap = new HashMap<>();
+        String[] splitedRow;
+        for (String row : fileRows) {
+            if (row.matches("^[.\\d]*$"))
+                continue;
+            splitedRow = row.split("_");
+            serviceFileMap.put(splitedRow[0], splitedRow[1]);
+        }
+
+        return serviceFileMap;
     }
 
     /**
