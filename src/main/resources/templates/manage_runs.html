@@ -41,6 +41,7 @@
 
 
 
+
     </style>
 
 </head>
@@ -88,12 +89,22 @@
         <div class="form-group">
             <label for="teamName">Team Name</label>
             <input id="teamName" name="teamName" type="text" th:value="${teamName}" class="form-control"
-                   placeholder="Введите имя команды как в...">
+                   placeholder="Введите имя команды как в..." list="teamNamesList">
+            <datalist id="teamNamesList">
+                <th:block th:each="teamNameStr : ${teamNames}">
+                    <option th:value="${teamNameStr}"></option>
+                </th:block>
+            </datalist>
         </div>
         <div class="form-group">
             <label for="jobName">Job Name, как в сфере</label>
             <input id="jobName" name="jobName" type="text" th:value="${jobName}" class="form-control"
-                   placeholder="Введите нназвание джобы в сфере">
+                   placeholder="Введите нназвание джобы в сфере" list="jobNamesList">
+            <datalist id="jobNamesList">
+                <th:block th:each="jobNameStr : ${jobNames}">
+                    <option th:value="${jobNameStr}"></option>
+                </th:block>
+            </datalist>
         </div>
         <div class="form-group">
             <label for="runsNumber">Сколько запусков анализировать</label>

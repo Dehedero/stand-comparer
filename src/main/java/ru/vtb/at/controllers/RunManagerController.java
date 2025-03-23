@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import ru.vtb.at.mappers.DPMapper;
 
@@ -22,8 +23,19 @@ public class RunManagerController {
     @Autowired
     DPMapper dpMapper;
 
+    @ModelAttribute("jobNames")
+    public List<String> jobNames() {
+        return dpMapper.getJobNames();
+    }
+
+    @ModelAttribute("teamNames")
+    public List<String> teamNames() {
+        return dpMapper.getTeamNames();
+    }
+
     @GetMapping("/manageRuns")
     public String runManagerPage(Model model) {
+        model.addAttribute("runsNumber", 1);
         return "manage_runs";
     }
 
@@ -40,6 +52,8 @@ public class RunManagerController {
 
     @PostMapping(value = "/manageRuns/doManage", params = "action=getData")
     public String runManagerPageGetData(Model model, String teamName, String jobName, Integer runsNumber) {
+        teamName = teamName.trim();
+        jobName = jobName.trim();
         model.addAttribute("teamName", teamName);
         model.addAttribute("jobName", jobName);
         model.addAttribute("runsNumber", runsNumber);

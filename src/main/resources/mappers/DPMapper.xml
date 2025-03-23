@@ -8,24 +8,53 @@
         SELECT DISTINCT l."name"
         FROM allure.test_results tr
         JOIN allure.links l ON tr.uuid = l.test_result_uuid
+        LEFT JOIN (
+            SELECT DISTINCT l."name"
+            FROM allure.test_results tr
+            JOIN allure.links l ON tr.uuid = l.test_result_uuid
+        WHERE tr.build_start = (select MAX(tr.build_start) FROM allure.test_results tr where tr.team_name = '${teamName}' <if test="jobName != null and jobName != ''"> and tr.job_name = '${jobName}'</if>)
+            AND tr.team_name = '${teamName}'
+            <if test="jobName != null and jobName != ''">
+                AND tr.job_name = '${jobName}'
+            </if>
+            AND tr.status = 'passed'
+        ) passed_links ON l."name" = passed_links."name"
         WHERE tr.build_start in
         <if test="num == 1">
             (select MAX(tr.build_start)
             FROM allure.test_results tr
             where tr.team_name = '${teamName}'
-            and tr.job_name = '${jobName}')
+            <if test="jobName != null and jobName != ''">
+                AND tr.job_name = '${jobName}'
+            </if>)
         </if>
         <if test="num > 1">
             (select distinct tr.build_start
             FROM allure.test_results tr
             where tr.team_name = '${teamName}'
-            and tr.job_name = '${jobName}'
+            <if test="jobName != null and jobName != ''">
+                AND tr.job_name = '${jobName}'
+            </if>
             order by tr.build_start desc
             limit ${num})
         </if>
         AND tr.team_name = '${teamName}'
-        AND tr.job_name = '${jobName}'
+        <if test="jobName != null and jobName != ''">
+            AND tr.job_name = '${jobName}'
+        </if>
         AND tr.status != 'passed'
+    </select>
+
+    <select id="getJobNames" resultType="String">
+        select distinct tr.job_name
+        FROM allure.test_results tr
+        where tr.job_name is not null
+    </select>
+
+    <select id="getTeamNames" resultType="String">
+        select distinct tr.team_name
+        FROM allure.test_results tr
+        where tr.team_name is not null
     </select>
 
 </mapper>
