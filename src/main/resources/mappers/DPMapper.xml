@@ -43,6 +43,7 @@
             AND tr.job_name = '${jobName}'
         </if>
         AND tr.status != 'passed'
+        AND passed_links."name" IS NULL
     </select>
 
     <select id="getJobNames" resultType="String">
